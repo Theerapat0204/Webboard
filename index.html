@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เข้าสู่ระบบ - BigC</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="login-page">
+    <div id="particles-js"></div>
+
+    <div class="login-container">
+        <img src="login.png" alt="Login Illustration" class="illustration">
+        <div class="form-container">
+            <!-- แท็บสำหรับสลับระหว่างลงทะเบียนและล็อกอิน -->
+            <div class="tabs">
+                <div class="tab active" onclick="showForm('login-form')">เข้าสู่ระบบ</div>
+                <div class="tab" onclick="showForm('register-form')">ลงทะเบียน</div>
+            </div>
+
+            <!-- ฟอร์มลงทะเบียน -->
+            <div id="register-form" class="form-content">
+                <h1>ลงทะเบียน</h1>
+                <form id="register-form-element" class="login-form">
+                    <label for="reg-branch-type">ประเภทสาขา</label>
+                    <select id="reg-branch-type" name="branch-type" required>
+                        <option value="" disabled selected>เลือกประเภทสาขา</option>
+                        <option value="bigformat">BigFormat</option>
+                        <option value="bigcmini">BigCmini</option>
+                    </select>
+
+                    <label for="reg-branch-code">รหัสสาขา</label>
+                    <input type="text" id="reg-branch-code" name="branch-code" placeholder="รหัสสาขา" required>
+
+                    <label for="reg-password">รหัสผ่าน</label>
+                    <input type="password" id="reg-password" name="password" placeholder="รหัสผ่าน" required>
+
+                    <button type="submit">ลงทะเบียน</button>
+                </form>
+            </div>
+
+            <!-- ฟอร์มล็อกอิน -->
+            <div id="login-form" class="form-content active">
+                <h1>เข้าสู่ระบบ</h1>
+                <form id="login-form-element" class="login-form">
+                    <label for="branch-type">ประเภทสาขา</label>
+                    <select id="branch-type" name="branch-type" required>
+                        <option value="" disabled selected>ประเภทสาขา</option>
+                        <option value="bigformat">BigFormat</option>
+                        <option value="bigcmini">BigCmini</option>
+                    </select>
+                    <label for="branch-code">รหัสสาขา</label>
+                    <div class="branch-code-container">
+                        <input type="text" id="branch-code" name="branch-code" placeholder="รหัสสาขา" required>
+                    </div>
+                    <label for="password">รหัสผ่าน</label>
+                    <div class="password-container">
+                        <input type="password" id="password" name="password" placeholder="รหัสผ่าน" required>
+                        <img src="login.png" alt="Show Password" class="eye-icon" onclick="togglePassword()">
+                    </div>
+                    <button type="submit">เข้าสู่ระบบ</button>
+                </form>
+                <div class="forgot-password">
+                    <a href="#" onclick="forgetPassword()">ลืมรหัสผ่าน / เปลี่ยนผู้ใช้</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 BigC Mini. สงวนลิขสิทธิ์.</p>
+    </footer>
+
+    <!-- เพิ่ม Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <!-- เพิ่ม Particles.js -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script>
+        // ตั้งค่า Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDORw-pZw1RkZ-9VFz8VRZxNPGrRNiNpzM",
+            authDomain: "bc-project1-f9d53.firebaseapp.com",
+            projectId: "bc-project1-f9d53",
+            storageBucket: "bc-project1-f9d53.firebasestorage.app",
+            messagingSenderId: "860580349583",
+            appId: "1:860580349583:web:04e56a552d06316aa152fa",
+            measurementId: "G-ZT6MRH31J2"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // ตั้งค่า Particles.js
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: '#6b21a8' },
+                shape: { type: 'circle' },
+                opacity: { value: 0.5, random: false },
+                size: { value: 3, random: true },
+                line_linked: { enable: true, distance: 150, color: '#6b21a8', opacity: 0.4, width: 1 },
+                move: { enable: true, speed: 2, direction: 'none', random: false, straight: false, out_mode: 'out', bounce: false }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: { onhover: { enable: true, mode: 'repulse' }, onclick: { enable: true, mode: 'push' }, resize: true },
+                modes: { repulse: { distance: 100, duration: 0.4 }, push: { particles_nb: 4 } }
+            },
+            retina_detect: true
+        });
+
+        // ฟังก์ชันสลับการมองเห็นรหัสผ่าน
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.querySelector('.eye-icon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.src = 'https://img.icons8.com/ios-filled/50/000000/invisible.png';
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.src = 'https://img.icons8.com/ios-filled/50/000000/visible.png';
+            }
+        }
+
+        // ฟังก์ชันสลับฟอร์มระหว่างลงทะเบียนและล็อกอิน
+        function showForm(formId) {
+            document.querySelectorAll('.form-content').forEach(form => {
+                form.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            document.getElementById(formId).classList.add('active');
+            document.querySelector(`[onclick="showForm('${formId}')"]`).classList.add('active');
+        }
+
+        // ฟังก์ชันจัดการการลงทะเบียน
+        const registerFormElement = document.getElementById('register-form-element');
+        registerFormElement.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const branchType = document.getElementById('reg-branch-type').value;
+            const branchCode = document.getElementById('reg-branch-code').value;
+            const password = document.getElementById('reg-password').value;
+
+            if (!branchType || !branchCode || !password) {
+                alert('กรุณากรอกข้อมูลให้ครบทุกช่อง');
+                return;
+            }
+
+            try {
+                const doc = await db.collection('users').doc(branchCode).get();
+                if (doc.exists) {
+                    alert('รหัสสาขานี้ถูกลงทะเบียนแล้ว กรุณาใช้รหัสสาขาอื่น หรือลืมรหัสผ่าน');
+                    return;
+                }
+
+                await db.collection('users').doc(branchCode).set({
+                    branchType: branchType,
+                    branchCode: branchCode,
+                    password: password
+                });
+                alert('ลงทะเบียนสำเร็จ! กรุณาเข้าสู่ระบบ');
+                showForm('login-form');
+            } catch (error) {
+                console.error('Error saving user data:', error);
+                alert('เกิดข้อผิดพลาดในการลงทะเบียน: ' + error.message);
+            }
+        });
+
+        // ฟังก์ชันจัดการการล็อกอิน
+        const loginFormElement = document.getElementById('login-form-element');
+        loginFormElement.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const branchType = document.getElementById('branch-type').value;
+            const branchCode = document.getElementById('branch-code').value;
+            const password = document.getElementById('password').value;
+
+            if (!branchType || !branchCode || !password) {
+                alert('กรุณากรอกข้อมูลให้ครบทุกช่อง');
+                console.log('ข้อมูลไม่ครบ');
+                return;
+            }
+
+            try {
+                const doc = await db.collection('users').doc(branchCode).get();
+                if (!doc.exists) {
+                    alert('ไม่พบข้อมูลผู้ใช้ กรุณาลงทะเบียน');
+                    showForm('register-form');
+                    return;
+                }
+
+                const userData = doc.data();
+                if (branchType !== userData.branchType || branchCode !== userData.branchCode || password !== userData.password) {
+                    alert('ข้อมูลไม่ถูกต้อง กรุณาตรวจสอบประเภทสาขา, รหัสสาขา, หรือรหัสผ่าน');
+                    console.log('ข้อมูลไม่ตรงกับที่ลงทะเบียน');
+                    return;
+                }
+
+                localStorage.setItem('branchCode', branchCode);
+                console.log('เก็บ branchCode ใน localStorage:', branchCode);
+
+                if (branchType === 'bigformat') {
+                    console.log('เปลี่ยนหน้าไป bigformat.html');
+                    window.location.href = 'bigformat.html';
+                } else if (branchType === 'bigcmini') {
+                    console.log('เปลี่ยนหน้าไป bigcmini.html');
+                    window.location.href = 'bigcmini.html';
+                }
+
+                loginFormElement.reset();
+            } catch (error) {
+                console.error('Error logging in:', error);
+                alert('เกิดข้อผิดพลาดในการเข้าสู่ระบบ: ' + error.message);
+            }
+        });
+
+        // ฟังก์ชันลืมรหัสผ่าน / เปลี่ยนผู้ใช้
+        async function forgetPassword() {
+            const branchCode = document.getElementById('branch-code').value;
+            if (!branchCode) {
+                alert('กรุณากรอก รหัสสาขา ก่อนลืมรหัสผ่าน');
+                return;
+            }
+
+            const confirmForget = confirm('คุณต้องการลืมรหัสผ่านและลงทะเบียนผู้ใช้ใหม่สำหรับรหัสสาขานี้หรือไม่?');
+            if (confirmForget) {
+                try {
+                    await db.collection('users').doc(branchCode).delete();
+                    alert('ข้อมูลผู้ใช้ถูกลบแล้ว กรุณาลงทะเบียนใหม่');
+                    showForm('register-form');
+                } catch (error) {
+                    console.error('Error deleting user data:', error);
+                    alert('เกิดข้อผิดพลาดในการลบข้อมูล: ' + error.message);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

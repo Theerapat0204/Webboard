@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigFormat Homepage</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="homepage">
+    <header>
+        <h1>
+            ยินดีต้อนรับสู่ BigFormat
+        </h1>
+        <p>รหัสสาขา: <span id="branch-code"></span></p>
+    </header>
+
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('executive-visit')">Executive Store Adopter Result</div>
+        </div>
+
+        <div id="executive-visit" class="tab-content active">
+            <iframe id="executive-iframe" 
+                frameborder="0" 
+                style="border:0" 
+                allowfullscreen 
+                sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+                loading="lazy">
+            </iframe>
+        </div>
+
+        <button class="logout-btn" onclick="logout()">ออกจากระบบ</button>
+    </div>
+
+    <script>
+        const branchCode = localStorage.getItem('branchCode');
+        if (branchCode) {
+            document.getElementById('branch-code').textContent = branchCode;
+
+            const executiveIframe = document.getElementById('executive-iframe');
+
+            const executiveBaseUrl = 'https://lookerstudio.google.com/embed/reporting/e03e8080-3ee1-4335-aef5-86bdb53d43df/page/gRcIF';
+
+            const execFilter = `include 0 IN ${branchCode}`;
+            let execParams = encodeURIComponent(JSON.stringify({ df113: execFilter }));
+            execParams = execParams.replace(/%20/g, '%EE%80%80');
+            executiveIframe.src = `${executiveBaseUrl}?params=${execParams}`;
+            
+            executiveIframe.width = '1200';
+            executiveIframe.height = '2500';
+        } else {
+            alert('ไม่พบรหัสสาขา กรุณาเข้าสู่ระบบใหม่');
+            window.location.href = 'index.html';
+        }
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function logout() {
+            localStorage.removeItem('branchCode');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
