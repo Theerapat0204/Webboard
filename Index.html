@@ -1777,8 +1777,8 @@ function queueActionChange(silent=true){
   }
 
   const changeKey = `${AM_CTX.key}|r${AM_CTX.round}|${AM_CTX.storeCode||''}`;
-  CHANGES.set(changeKey, payload);
-  refreshDirty();
+CHANGES.set(changeKey, payload);
+ refreshDirty();
 }
 
 // ปุ่มตกลง: ต้องผ่าน validate ก่อนคิวบันทึก
@@ -1962,30 +1962,37 @@ function renderAreaContainers(){
           if (attHost) buildRowAttach(attHost, imgs);
 
           // เปิดโมดัล: ส่ง action/id ของ "รอบที่คลิก" เข้าไปก่อนเสมอ
-          tr.querySelectorAll('[data-plus]').forEach(btn=>{
-            btn.addEventListener('click', ()=>{
-              const rn = Number(btn.getAttribute('data-round'));
-              const perRoundRaw  = row.roundRaw?.[rn] || {};
-              const ctx = {
-                refno: perRoundRaw.refno || '',
-                key:   btn.getAttribute('data-key'),
-                topic: btn.getAttribute('data-topic'),
-                question: btn.getAttribute('data-question'),
-                storeCode: btn.getAttribute('data-store'),
+tr.querySelectorAll('[data-plus]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const rn    = Number(btn.getAttribute('data-round'));
+    const key   = btn.getAttribute('data-key');
+    const store = btn.getAttribute('data-store') || '';
+    const perRoundRaw  = row.roundRaw?.[rn] || {};
 
-                // ✅ ใช้ actionid ของรอบที่คลิก (ถ้าไม่มีค่อยใช้ของล่าสุด)
-                actionid: getActionId(perRoundRaw) || getActionId(row) || null,
+    // 🔑 สร้าง changeKey ให้ตรงกับ queueActionChange()
+    const changeKey = `${key}|r${rn}|${store}`;
+    const pending   = CHANGES.get(changeKey);
+    const pendingAction = pending?.action || null;
 
-                round: rn,
+    const ctx = {
+      refno: perRoundRaw.refno || '',
+      key,
+      topic: btn.getAttribute('data-topic'),
+      question: btn.getAttribute('data-question'),
+      storeCode: store,
 
-                // ✅ ส่ง currentAction ของรอบที่คลิกเพื่อกันค่า reset
-                currentAction: perRoundRaw.action || row.action || {},
+      actionid: getActionId(perRoundRaw) || getActionId(row) || null,
+      round: rn,
 
-                currentComment: perRoundRaw.comment || ''
-              };
-              openActionModal(ctx);
-            });
-          });
+      // ⬅️ ถ้ามี pending ใน CHANGES ให้ใช้ก่อน
+      currentAction: pendingAction || perRoundRaw.action || row.action || {},
+      currentComment: perRoundRaw.comment || ''
+    };
+
+    openActionModal(ctx);
+  });
+});
+
 
           tbody.appendChild(tr);
         });
