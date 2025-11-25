@@ -1603,32 +1603,37 @@ function buildRowAttach(host, images){
 function pivotByQuestionAcrossRounds(items){
   const map = new Map();
   for (const it of items){
-    const area = it.area||''; const topic = it.topic||''; const question = it.question||'';
-    const storeCode = it.storeCode||''; const storeName = it.storeName||'';
-    const round = Number(it.round||0);
+    const area = it.area||''; 
+    const topic = it.topic||''; 
+    const question = it.question||''; 
+    const storeCode = it.storeCode||''; 
+    const storeName = it.storeName||'';
+    const round = Number(it.round||-1);        // round จริงในตารางคือ 1,2,3
     const key = `${area}||${topic}||${question}||${storeCode}`;
 
     if(!map.has(key)){
       map.set(key, {
         key, area, topic, question, storeCode, storeName,
-        roundAns:{1:null,2:null,3:null}, roundRaw:{1:null,2:null,3:null},
+        roundAns:{1:null,2:null,3:null},       // ✅ ใช้ 1,2,3
+        roundRaw:{1:null,2:null,3:null},
         action: it.action||null,
-        actionId: getActionId(it),       // << ใช้ helper
+        actionId: getActionId(it),
         refno: it.refno||'',
       });
     }
     const row = map.get(key);
-    if (round===1||round===2||round===3){
-      row.roundAns[round] = it.answer||null;
+
+    if (round===1 || round===2 || round===3){  // ✅ รองรับเฉพาะ 1,2,3
+      row.roundAns[round] = it.answer || null;
       row.roundRaw[round] = it;
     }
-    // ค่าล่าสุด (3 > 2 > 1)
+
+    // ✅ เลือก Action ใหม่จาก round 3 > 2 > 1
     row.action   = (row.roundRaw[3]?.action || row.roundRaw[2]?.action || row.roundRaw[1]?.action || row.action || null);
     row.actionId = getActionId(row.roundRaw[3]) || getActionId(row.roundRaw[2]) || getActionId(row.roundRaw[1]) || row.actionId;
   }
   return Array.from(map.values());
 }
-
 
 function groupAreaTopicQuestion(rows){
   const g = new Map();
@@ -2465,4 +2470,5 @@ async function importActionsXlsxToSupabase(
 </script>
 </body>
 </html>
+
 
