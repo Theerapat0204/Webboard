@@ -86,6 +86,18 @@ body{
 }
 @keyframes sh{ 100%{ transform:translateX(100%);} }
 
+    @media (max-width: 768px){
+  .filters-row{
+    overflow-x: visible;
+  }
+  .filters-row > label{
+    min-width: 100%;
+  }
+  .filters-row > .flex{
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
 /* Sidebar: desktop collapse shifts layout; mobile overlay */
 /* ========== SIDEBAR (Desktop sticky, Mobile overlay) ========== */
 .sidebar{
@@ -360,7 +372,15 @@ html, body { max-width: 100%; overflow-x: hidden; }
     min-height: 100px !important;
   }
 }
-
+@media (max-width: 640px){
+  .area-table-wrap {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+  .area-table-wrap table{
+    font-size: 12px;
+  }
+}
   </style>
 </head>
 <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
@@ -488,7 +508,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
     </aside>
 
     <!-- MAIN -->
-    <main class="flex-1 min-h-screen">
+   <main class="flex-1 min-h-screen w-full overflow-x-hidden">
       <!-- Top bar -->
       <div class="flex items-center justify-between p-3 bg-white/80 backdrop-blur sticky top-0 z-30 border-b topbar">
  <div class="flex items-center gap-2">
@@ -576,7 +596,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
             <div class="liquid p-2">
               <div class="text-[11px] font-semibold text-slate-600 mb-1">Filters</div>
 
-              <div class="flex flex-nowrap items-end gap-2 overflow-x-auto no-scrollbar py-1">
+              <div class="flex flex-wrap items-end gap-2 overflow-x-auto no-scrollbar py-1 filters-row">
                 <label class="block min-w-[120px]">
                   <span class="block text-[11px] text-slate-500 mb-0.5">Round</span>
                   <select id="f_round" class="ios-input ios-input--sm w-full"></select>
@@ -1885,26 +1905,28 @@ function renderAreaContainers(){
         const rows = qmap.get(question).slice().sort((a,b)=>cmpTH(a.storeCode, b.storeCode));
 
         const qBox = document.createElement('div');
-        qBox.className = 'rounded-lg border border-slate-200 bg-white';
-        qBox.innerHTML = `
-          <div class="px-3 py-2 border-b bg-white rounded-t-lg">
-            <div class="text-[13px] text-slate-700">
-              <span class="font-semibold">Question:</span> ${question || '-'}
-            </div>
-          </div>
-          <div class="p-2">
-            <table class="text-sm">
-              <thead class="bg-slate-50 text-slate-700">
-                <tr>
-                  <th class="px-2 py-2 text-left  w-[220px]">Store</th>
-                  <th class="px-2 py-2 text-center w-[110px]">Round1</th>
-                  <th class="px-2 py-2 text-center w-[110px]">Round2</th>
-                  <th class="px-2 py-2 text-center w-[110px]">Round3</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>`;
+qBox.className = 'rounded-lg border border-slate-200 bg-white';
+qBox.innerHTML = `
+  <div class="px-3 py-2 border-b bg-white rounded-t-lg">
+    <div class="text-[13px] text-slate-700">
+      <span class="font-semibold">Question:</span> ${question || '-'}
+    </div>
+  </div>
+  <div class="p-2 area-table-wrap">
+    <div class="overflow-x-auto -mx-2">
+      <table class="min-w-[640px] text-sm">
+        <thead class="bg-slate-50 text-slate-700">
+          <tr>
+            <th class="px-2 py-2 text-left  w-[220px]">Store</th>
+            <th class="px-2 py-2 text-center w-[110px]">Round1</th>
+            <th class="px-2 py-2 text-center w-[110px]">Round2</th>
+            <th class="px-2 py-2 text-center w-[110px]">Round3</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>`;
         const tbody = qBox.querySelector('tbody');
 
         rows.forEach(row=>{
@@ -2482,6 +2504,7 @@ async function importActionsXlsxToSupabase(
 </script>
 </body>
 </html>
+
 
 
 
