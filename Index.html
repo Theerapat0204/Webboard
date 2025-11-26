@@ -116,20 +116,6 @@ body{
 /* โหมดหุบบนจอใหญ่ (กรณีมีปุ่ม toggle) */
 .sidebar.closed{ width:0 !important; border-right:0 !important; overflow:hidden; }
 
-/* ========== Mobile (<=1024px): ใช้ overlay แบบ fixed ========== */
-@media (max-width:1024px){
-  .sidebar{
-    position: fixed;        /* overlay คงที่บนมือถือ */
-    left:0; top:56px;       /* วางใต้ topbar */
-    height: calc(100vh - 56px);
-    transform: translateX(-100%);
-    transition: transform .25s ease;
-    z-index: 40;
-  }
-  .sidebar.open{ transform: translateX(0); }
-  .overlay{ position:fixed; inset:0; background:rgba(0,0,0,.4); display:none; z-index:30; }
-  .overlay.show{ display:block; }
-}
 /* ========== FILTER BAR (Sticky ใต้ Topbar) ========== */
 .filters-bar{
   position: sticky;
@@ -328,18 +314,6 @@ html, body { max-width: 100%; overflow-x: hidden; }
   .tile-mob  { min-height: 84px; }
 }
 
-@media (max-width: 1024px){
-  .sidebar{
-    position: fixed; inset: 0 auto 0 0; z-index: 40;
-    width: 280px; transform: translateX(-100%); transition: transform .25s ease;
-    background: #fff; border-right: 1px solid #e5e7eb;
-  }
-  .sidebar.open{ transform: translateX(0); }
-  .overlay{ position: fixed; inset: 0; background: rgba(0,0,0,.45);
-    backdrop-filter: blur(2px); z-index: 30; display:none; }
-  .overlay.show{ display:block; }
-}
-
 @media (max-width: 640px){
   .topbar { padding:.5rem .5rem; }
 }
@@ -379,6 +353,47 @@ html, body { max-width: 100%; overflow-x: hidden; }
   }
   .area-table-wrap table{
     font-size: 12px;
+  }
+}
+    /* ===== MOBILE LAYOUT (<= 1024px) ===== */
+@media (max-width:1024px){
+
+  /* flex หลักของ app ให้เป็น block บนมือถือ
+     เพื่อไม่ให้ main ถูกดันไปด้านขวาโดย sidebar */
+  #appShell > .flex{
+    display:block;
+  }
+
+  /* sidebar เป็น overlay เลื่อนเข้า–ออกทางซ้าย */
+  .sidebar{
+    position:fixed;
+    top:56px;               /* สูงเท่ากับ topbar */
+    bottom:0;
+    left:0;
+    right:auto;
+    width:260px;            /* หรือ 280 ตามชอบ */
+    max-width:80%;          /* กันไม่ให้กินเต็มจอเล็กมาก ๆ */
+    background:#fff;
+    border-right:1px solid #e5e7eb;
+    transform:translateX(-100%);
+    transition:transform .25s ease;
+    z-index:40;
+  }
+  .sidebar.open{
+    transform:translateX(0);
+  }
+
+  /* overlay มืด ๆ หลังเมนู */
+  .overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.45);
+    backdrop-filter:blur(2px);
+    z-index:30;
+    display:none;
+  }
+  .overlay.show{
+    display:block;
   }
 }
   </style>
@@ -2504,6 +2519,7 @@ async function importActionsXlsxToSupabase(
 </script>
 </body>
 </html>
+
 
 
 
