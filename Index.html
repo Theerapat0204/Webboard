@@ -1746,13 +1746,13 @@ document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeActionModa
 qs('actionModal').querySelector('.backdrop').onclick = closeActionModal;
 
 // ===== เก็บการแก้ไขเข้า queue (เงียบถ้ายังไม่ผ่าน Reason/Assign) =====
-function queueActionChange(silent=true){
-  if(!AM_CTX) return;
+function queueActionChange(silent = true) {
+  if (!AM_CTX) return;
 
   const hasReason = !!qs('am_reason')?.value?.trim();
   const hasAssign = !!qs('am_assign')?.value?.trim();
-  if(!hasReason || !hasAssign){
-    if(!silent) alert('กรุณากรอก Reason และเลือก Assign ก่อน');
+  if (!hasReason || !hasAssign) {
+    if (!silent) alert('กรุณากรอก Reason และเลือก Assign ก่อน');
     return;
   }
 
@@ -1763,22 +1763,24 @@ function queueActionChange(silent=true){
     status: qs('am_status').value,
     dueDate:qs('am_due').value
   };
-  const payload = { refno: AM_CTX.refno, action: actionFields };
 
-  if (AM_CTX.key.startsWith('id:')){
-    payload.actionid = AM_CTX.key.slice(3);
-  } else {
-    payload.context = {
-      topic: AM_CTX.topic,
-      question: AM_CTX.question,
+  // ✅ ส่ง context ไปให้ backend เสมอ
+  const payload = {
+    refno: AM_CTX.refno,
+    action: actionFields,
+    context: {
+      topic:     AM_CTX.topic || '',
+      question:  AM_CTX.question || '',
       storeCode: AM_CTX.storeCode || '',
-      round: AM_CTX.round || ''
-    };
-  }
+      round:     AM_CTX.round || ''
+    }
+  };
 
-  const changeKey = `${AM_CTX.key}|r${AM_CTX.round}|${AM_CTX.storeCode||''}`;
-CHANGES.set(changeKey, payload);
- refreshDirty();
+  // ใช้ key เดิมสำหรับ map CHANGES ให้ตรงกับตอน openActionModal
+  const changeKey = `${AM_CTX.key}|r${AM_CTX.round}|${AM_CTX.storeCode || ''}`;
+  CHANGES.set(changeKey, payload);
+
+  refreshDirty();
 }
 
 // ปุ่มตกลง: ต้องผ่าน validate ก่อนคิวบันทึก
@@ -2477,5 +2479,6 @@ async function importActionsXlsxToSupabase(
 </script>
 </body>
 </html>
+
 
 
