@@ -1764,7 +1764,7 @@ function queueActionChange(silent = true) {
     dueDate:qs('am_due').value
   };
 
-  // ✅ ส่ง context ไปให้ backend เสมอ
+  // ✅ ส่งทั้ง refno + context เสมอ
   const payload = {
     refno: AM_CTX.refno,
     action: actionFields,
@@ -1776,10 +1776,13 @@ function queueActionChange(silent = true) {
     }
   };
 
-  // ใช้ key เดิมสำหรับ map CHANGES ให้ตรงกับตอน openActionModal
+  // ✅ ถ้ามี actionid ให้ส่งไปด้วย (ใช้เป็นคีย์หลักฝั่ง backend)
+  if (AM_CTX.actionid) {
+    payload.actionid = AM_CTX.actionid;
+  }
+
   const changeKey = `${AM_CTX.key}|r${AM_CTX.round}|${AM_CTX.storeCode || ''}`;
   CHANGES.set(changeKey, payload);
-
   refreshDirty();
 }
 
@@ -2479,6 +2482,7 @@ async function importActionsXlsxToSupabase(
 </script>
 </body>
 </html>
+
 
 
 
