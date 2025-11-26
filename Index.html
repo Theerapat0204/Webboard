@@ -98,23 +98,59 @@ body{
     justify-content: flex-start;
   }
 }
-/* Sidebar: desktop collapse shifts layout; mobile overlay */
-/* ========== SIDEBAR (Desktop sticky, Mobile overlay) ========== */
+/* ===== SIDEBAR: desktop = sticky / mobile = overlay ===== */
+
+/* พื้นฐานร่วมกันทุกขนาดจอ */
 .sidebar{
-  width:280px;
-  border-right:1px solid #e2e8f0;
-  background:#fff;
-  /* ทำให้ sidebar ไม่เลื่อนตามหน้า (stick ใต้แถบบน) */
-  position: sticky;         /* <- สำคัญ */
-  top:56px;                 /* ความสูง topbar ของคุณ ถ้า topbar สูงต่างไป ปรับตรงนี้ */
-  height: calc(100vh - 56px);
-  overflow-y: auto;         /* สกรอลล์เฉพาะภายใน sidebar */
-  align-self: flex-start;   /* กัน sticky หลุดเมื่อใช้ flex */
-  z-index: 10;              /* ต่ำกว่า topbar/filters */
+  width: 280px;
+  border-right: 1px solid #e2e8f0;
+  background: #fff;
 }
 
-/* โหมดหุบบนจอใหญ่ (กรณีมีปุ่ม toggle) */
-.sidebar.closed{ width:0 !important; border-right:0 !important; overflow:hidden; }
+/* --- Desktop (>=1025px): ติดขอบซ้าย ไม่ทับเนื้อหา --- */
+@media (min-width: 1025px){
+  .sidebar{
+    position: sticky;
+    top: 56px;                         /* อยู่ใต้ topbar */
+    height: calc(100vh - 56px);
+    overflow-y: auto;
+    align-self: flex-start;
+    z-index: 10;
+  }
+  .sidebar.closed{
+    width: 0 !important;
+    border-right: 0 !important;
+    overflow: hidden;
+  }
+}
+
+/* --- Mobile / Tablet (<=1024px): ให้เป็น overlay เลื่อนเข้าจอ --- */
+@media (max-width: 1024px){
+  .sidebar{
+    position: fixed;
+    left: 0;
+    top: 56px;                          /* อยู่ใต้ topbar */
+    height: calc(100vh - 56px);
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+    z-index: 40;
+  }
+  .sidebar.open{
+    transform: translateX(0);
+  }
+
+  .overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    backdrop-filter: blur(2px);
+    z-index: 30;
+    display: none;
+  }
+  .overlay.show{
+    display: block;
+  }
+}
 
 /* ========== FILTER BAR (Sticky ใต้ Topbar) ========== */
 .filters-bar{
@@ -362,25 +398,6 @@ html, body { max-width: 100%; overflow-x: hidden; }
      เพื่อไม่ให้ main ถูกดันไปด้านขวาโดย sidebar */
   #appShell > .flex{
     display:block;
-  }
-
-  /* sidebar เป็น overlay เลื่อนเข้า–ออกทางซ้าย */
-  .sidebar{
-    position:fixed;
-    top:56px;               /* สูงเท่ากับ topbar */
-    bottom:0;
-    left:0;
-    right:auto;
-    width:260px;            /* หรือ 280 ตามชอบ */
-    max-width:80%;          /* กันไม่ให้กินเต็มจอเล็กมาก ๆ */
-    background:#fff;
-    border-right:1px solid #e5e7eb;
-    transform:translateX(-100%);
-    transition:transform .25s ease;
-    z-index:40;
-  }
-  .sidebar.open{
-    transform:translateX(0);
   }
 
   /* overlay มืด ๆ หลังเมนู */
@@ -2519,6 +2536,7 @@ async function importActionsXlsxToSupabase(
 </script>
 </body>
 </html>
+
 
 
 
