@@ -1774,9 +1774,13 @@ function openActionModal(ctx){
   qs('am_round').textContent = ctx.round;
   qs('am_comment_ro').textContent = ctx.currentComment || '—';
 
-  // เติมรายการ Assign (กัน null element)
   const assignEl = qs('am_assign');
-  if (assignEl) assignEl.innerHTML = buildBuOptions(ctx.currentAction?.bu || '');
+if (assignEl) {
+  const cur = String(ctx.currentAction?.bu || '').trim();
+  const defaultBu = cur || 'Operation';     
+  assignEl.innerHTML = buildBuOptions(defaultBu);
+  assignEl.value = defaultBu;              
+}
 
   qs('am_reason').value = ctx.currentAction?.reason || '';
   qs('am_action').value = ctx.currentAction?.text || '';
@@ -2540,6 +2544,7 @@ async function importActionsXlsxToSupabase(
 </script>
 </body>
 </html>
+
 
 
 
