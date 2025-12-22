@@ -1251,12 +1251,15 @@ async function renderDashboard(){
 }
 
 
+
 function normalizeStatus(s){
-  const v = String(s||'').trim().toLowerCase();
+  const v = String(s ?? '').trim().toLowerCase();
   if(!v) return 'none';
-  if(v==='done') return 'done';
-  if(v==='in progress' || v==='inprogress') return 'inprogress';
-  if(v==='sent bu' || v==='sent to bu' || v==='sent') return 'sent';
+  if(v === 'no action' || v === 'noaction') return 'none';
+
+  if(v === 'done') return 'done';
+  if(v === 'in progress' || v === 'inprogress') return 'inprogress';
+  if(v === 'sent bu' || v === 'sent to bu' || v === 'sent') return 'sent';
   return v;
 }
 
@@ -2537,6 +2540,7 @@ async function importActionsXlsxToSupabase(
 </script>
 </body>
 </html>
+
 
 
 
