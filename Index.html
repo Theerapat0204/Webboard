@@ -1855,7 +1855,7 @@ qs('am_ok').onclick = ()=>{
 
 // ===== Options Assign (คง logic เดิม) =====
 function buildBuOptions(current){
-  const pool = new Set(['Commercial','HR', 'Supply Chain', 'Maintenance', 'Town Center', 'Property', 'Wawee', 'Pure', 'Marketing']);
+  const pool = new Set(['Operation','Commercial','HR', 'Supply Chain', 'Maintenance', 'Town Center', 'Property', 'Wawee', 'Pure', 'Marketing']);
   ALL_ITEMS.forEach(it=>{ if(it.action?.bu) pool.add(it.action.bu); });
   return Array.from(pool).map(bu=>`<option ${bu===current?'selected':''}>${bu}</option>`).join('');
 }
@@ -2544,6 +2544,7 @@ async function importActionsXlsxToSupabase(
 </script>
 </body>
 </html>
+
 
 
 
